@@ -1,7 +1,7 @@
 module JumioRock
   class Gateway
-    attr_accessor :endpoint_url, :data
-
+    attr_accessor :endpoint_url
+    
     def initialize
       @endpoint_url = conf.url
     end
