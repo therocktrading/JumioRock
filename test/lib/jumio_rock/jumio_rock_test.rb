@@ -24,8 +24,25 @@ def json_body
   EOF
 end
 
+def success_api_response
+  "idExpiry=2022-12-31&idType=PASSPORT&idDob=1990-01-01&idCheckSignature=OK&idCheckDataPositions=OK&idCheckHologram=OK&idCheckMicroprint=OK&idCheckDocumentValidation=OK&idCountry=USA&idScanSource=WEB_UPLOAD&idFirstName=FIRSTNAME&verificationStatus=APPROVED_VERIFIED&jumioIdScanReference=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&personalNumber=N%2FA&merchantIdScanReference=YOURIDSCANREFERENCE&idCheckSecurityFeatures=OK&idCheckMRZcode=OK&idScanImage=https%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fidscan%2Fxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Ffront&callBackType=NETVERIFYID&clientIp=xxx.xxx.xxx.xxx&idLastName=LASTNAME&idAddress=%7B%22country%22%3A%22USA%22%2C%22state%22%3A%22OH%22%7D&idScanStatus=SUCCESS&idNumber=P1234"
+end
+
+def unsuccess_api_response
+end
+
+def parse_post(str)
+  params = {}
+  splitted_values = str.split('&')
+  splitted_values.each do |v|
+    kv = v.match(/^([\w\W]+)=([\w\W]+)/)
+    params[kv[1].to_sym] = kv[2]
+  end
+  params
+end
+
 describe JumioRock::Gateway do
-  before :each do 
+  before :once do 
     JumioRock::Configuration.configure do |config|
       config.userid = "username"
       config.password = "password"
@@ -33,7 +50,6 @@ describe JumioRock::Gateway do
   end
   
   it "should post image" do 
-    p JumioRock::Configuration.configuration
     gateway = JumioRock::Gateway.new
     stub_api_request
 
@@ -41,6 +57,11 @@ describe JumioRock::Gateway do
     assert_equal response.timestamp, "2012-08-16T10:37:44.623Z"
 
   end
-  
+
+  it "parse post" do 
+    params = parse_post(success_api_response)
+    pp = JumioRock::PostParser.new(params)
+    assert_equal("2022-12-31", pp.idExpiry)
+  end
 
 end

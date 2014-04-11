@@ -26,5 +26,4 @@ describe JumioRock::PerformNetverifyParams do
     pnp.encode_image(path)
     assert_equal pnp.frontsideImage, "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAACVBMVEUAAAAAAAAKFB5aVYYgAAAAA3RSTlMAgIAsTd+1AAAAFUlEQVR4nGNiAAImFRBxB0QwUEgAAEtUASFOz9UDAAAAAElFTkSuQmCC"
   end
-
 end
