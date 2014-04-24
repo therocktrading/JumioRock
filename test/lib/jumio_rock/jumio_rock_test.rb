@@ -1,25 +1,48 @@
 require_relative '../../minitest_helper'
 
 def stub_api_request
-  prefix = jumio_conf.url.match(/^https/) ? "https" : "http"
-  url = jumio_conf.url.gsub(/http[s]:\/\//,'')
+  prefix = jumio_conf.api_url.match(/^https/) ? "https" : "http"
+  url = jumio_conf.api_url.gsub(/http[s]:\/\//,'')
   stub_request(:post, "#{prefix}://#{jumio_conf.api_token}:#{jumio_conf.api_secret}@#{url}").
     with(:headers => {
       'Host'=>'netverify.com:443', 
       'User-Agent'=>"#{jumio_conf.company_name} #{jumio_conf.app_name}/#{jumio_conf.version}"
     }).
-    to_return(:status => 200, :body => json_body, :headers => {})
+    to_return(:status => 200, :body => json_api_response, :headers => {})
+end
+
+def stup_init_embed_request
+  stub_request(:post, "https://username:password@netverify.com/api/netverify/v2/initiateNetverify").
+    with(
+      :body => "{\"merchantIdScanReference\":\"scanID\",\"successUrl\":\"http://success_url\",\"errorUrl\":\"http://error_url\"}",
+      :headers => {
+        'Accept'=>'application/json', 
+        'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 
+        'Content-Type'=>'application/json', 
+        'Host'=>'netverify.com:443', 
+        'User-Agent'=>'YOURCOMPANYNAME YOURAPPLICATIONNAME/0.0.1'}).
+    to_return(:status => 200, :body => json_init_embed_response, :headers => {})
 end
 
 def jumio_conf
   JumioRock::Configuration.configuration
 end
 
-def json_body
+def json_api_response
   <<-EOF
     {
     "timestamp": "2012-08-16T10:37:44.623Z",
     "jumioIdScanReference": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    }
+  EOF
+end
+
+def json_init_embed_response
+  <<-EOF
+    {
+      "timestamp": "2012-08-16T10:27:29.494Z",
+      "authorizationToken": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "jumioIdScanReference": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     }
   EOF
 end
@@ -42,7 +65,7 @@ def parse_post(str)
   params
 end
 
-describe JumioRock::Gateway do
+describe JumioRock::Client do
   before :once do 
     JumioRock::Configuration.configure do |config|
       config.api_token = "username"
@@ -51,14 +74,30 @@ describe JumioRock::Gateway do
     @path = create_test_image
   end
   
-  it "should post image" do 
+  it "should post image using api" do 
     stub_api_request
 
-    gateway = JumioRock::Gateway.new
+    client = JumioRock::Client.new
     pnp = JumioRock::PerformNetverifyParams.new("1", @path)
     
-    response = gateway.call pnp.to_json
+    response = client.call_api pnp.to_json
     assert_equal response.timestamp, "2012-08-16T10:37:44.623Z"
+
+  end
+
+  it 'initialize embed iframe' do 
+    stup_init_embed_request
+
+    auth_token = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+    client = JumioRock::Client.new
+    pnp = JumioRock::EmbedNetverifyParams.new("scanID", "http://success_url", "http://error_url")
+    response = client.init_embed pnp.to_json
+
+    assert_equal response.authorizationToken, auth_token
+
+    iframe = client.iframe response.authorizationToken
+    assert_match auth_token, iframe
 
   end
 
@@ -73,5 +112,6 @@ describe JumioRock::Gateway do
     pp = JumioRock::PostParser.new(params)
     assert_equal(false, pp.success?)
   end
+
 
 end
