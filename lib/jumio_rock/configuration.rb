@@ -1,6 +1,6 @@
 module JumioRock
   class Configuration
-    attr_accessor :app_name, :company_name, :version, :url, :userid, :password
+    attr_accessor :app_name, :company_name, :version, :url, :api_token, :api_secret
 
     def initialize
       self.company_name = 'YOURCOMPANYNAME'
