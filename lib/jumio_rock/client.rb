@@ -25,13 +25,14 @@ module JumioRock
       post(multi_document_url, body)
     end
 
-    def iframe(authorization_token)
+    def iframe(authorization_token, locale = "en")
       <<-TEXT
         <script type="text/javascript" src="https://netverify.com/widget/jumio-verify/2.0/iframe-script.js"> </script>
         <script type="text/javascript">
           /*<![CDATA[*/
           JumioClient.setVars({
-          authorizationToken: "#{authorization_token}"
+          authorizationToken: "#{authorization_token}",
+          locale: "#{locale}"
           }).initVerify("JUMIOIFRAME");
           /*]]>*/
         </script>
