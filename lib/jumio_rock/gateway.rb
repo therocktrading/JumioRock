@@ -13,7 +13,7 @@ module JumioRock
         headers: headers,
         body: body
       )
-      OpenStruct.new JSON.parse(response.body)
+      #OpenStruct.new JSON.parse(response.body)
     end
 
     private
