@@ -6,11 +6,12 @@ module JumioRock
       @endpoint_url = conf.url
     end
 
-    def call
-      connection = Excon.new(endpoint_url, :user => conf.userid, :password => conf.password)
+    def call(body)
+      connection = Excon.new(endpoint_url, :user => conf.api_token, :password => conf.api_secret)
       response = connection.request(
-        method: 'get',
-        headers: headers
+        method: 'post',
+        headers: headers,
+        body: body
       )
       OpenStruct.new JSON.parse(response.body)
     end

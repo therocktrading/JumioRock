@@ -3,7 +3,7 @@ require_relative '../../minitest_helper'
 def stub_api_request
   prefix = jumio_conf.url.match(/^https/) ? "https" : "http"
   url = jumio_conf.url.gsub(/http[s]:\/\//,'')
-  stub_request(:get, "#{prefix}://#{jumio_conf.userid}:#{jumio_conf.password}@#{url}").
+  stub_request(:post, "#{prefix}://#{jumio_conf.api_token}:#{jumio_conf.api_secret}@#{url}").
     with(:headers => {
       'Host'=>'netverify.com:443', 
       'User-Agent'=>"#{jumio_conf.company_name} #{jumio_conf.app_name}/#{jumio_conf.version}"
@@ -45,16 +45,19 @@ end
 describe JumioRock::Gateway do
   before :once do 
     JumioRock::Configuration.configure do |config|
-      config.userid = "username"
-      config.password = "password"
+      config.api_token = "username"
+      config.api_secret = "password"
     end
+    @path = create_test_image
   end
   
   it "should post image" do 
-    gateway = JumioRock::Gateway.new
     stub_api_request
 
-    response = gateway.call
+    gateway = JumioRock::Gateway.new
+    pnp = JumioRock::PerformNetverifyParams.new("1", @path)
+    
+    response = gateway.call pnp.to_json
     assert_equal response.timestamp, "2012-08-16T10:37:44.623Z"
 
   end
