@@ -9,20 +9,28 @@ module JumioRock
       @multi_document_url = conf.multi_document_url
     end
 
-    def call_api(body)
-      post(api_url, body)
+    def call_api(scan_reference, front_side_image_path, options = {})
+      body = PerformNetverifyParams.new(scan_reference, front_side_image_path)
+      body = set_options body, options
+      post(api_url, body.to_json)
     end
 
-    def init_embed(body)
-      post(init_embed_url, body)
+    def init_embed(scan_reference, success_url, error_url, options = {})
+      body = EmbedNetverifyParams.new(scan_reference, success_url, error_url)
+      body = set_options body, options
+      post(init_embed_url, body.to_json)
     end
 
-    def init_redirect(body)
-      post(init_redirect_url, body)
+    def init_redirect(scan_reference, customer_id, options = {})
+      body = RedirectNetverifyParams.new(scan_reference, customer_id)
+      body = set_options body, options
+      post(init_redirect_url, body.to_json)
     end
 
-    def init_multidocument(body)
-      post(multi_document_url, body)
+    def init_multidocument(document_type, merchant_scan_reference, customer_id, success_url, error_url, options = {})
+      body = MultiDocumentNetverifyParams.new(document_type, merchant_scan_reference, customer_id, success_url, error_url)
+      body = set_options body, options
+      post(multi_document_url, body.to_json)
     end
 
     def iframe(authorization_token, locale = "en")
@@ -40,6 +48,13 @@ module JumioRock
     end
 
     private
+
+    def set_options(body, options)
+      options.keys.each do |k|
+        body.send("#{k}=", options(k))
+      end
+      body
+    end
 
     def post(url, body)
       connection = Excon.new(url, :user => conf.api_token, :password => conf.api_secret)
