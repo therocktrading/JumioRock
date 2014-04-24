@@ -19,7 +19,7 @@ describe JumioRock::Client do
   end
 
   it 'initialize embed iframe' do 
-    stup_init_embed_request
+    stub_init_embed_request
 
     auth_token = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
@@ -33,7 +33,7 @@ describe JumioRock::Client do
   end
 
   it 'initialize multi document' do 
-    stup_multi_document_request
+    stub_multi_document_request
     auth_token = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
     client = JumioRock::Client.new
@@ -44,6 +44,16 @@ describe JumioRock::Client do
     iframe = client.iframe response.authorizationToken
     assert_match auth_token, iframe
 
+  end
+
+  it 'initialize redirect' do 
+    stub_redirect_request
+    auth_token = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+    client = JumioRock::Client.new
+    response = client.init_redirect("scan_id", "customer_id")
+
+    assert_equal response.clientRedirectUrl, "https://[your-domain-prefix].netverify.com/v2?authorizationToken=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   end
 
   it "success response" do 
