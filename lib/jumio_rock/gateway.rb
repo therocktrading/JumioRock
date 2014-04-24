@@ -7,7 +7,7 @@ module JumioRock
     end
 
     def call(body)
-      connection = Excon.new("#{conf.api_token}:#{conf.api_secret}@#{endpoint_url}")
+      connection = Excon.new("https://#{conf.api_token}:#{conf.api_secret}@#{endpoint_url}")
       #connection = Excon.new(endpoint_url, :user => conf.api_token, :password => conf.api_secret)
       response = connection.request(
         method: 'post',

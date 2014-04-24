@@ -6,7 +6,7 @@ module JumioRock
       self.company_name = 'YOURCOMPANYNAME'
       self.app_name = 'YOURAPPLICATIONNAME'
       self.version = VERSION
-      self.url = "https://netverify.com/api/netverify/v2/performNetverify"
+      self.url = "netverify.com/api/netverify/v2/performNetverify"
     end
 
     def self.configuration
