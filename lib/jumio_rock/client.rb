@@ -1,11 +1,12 @@
 module JumioRock
   class Client
-    attr_accessor :api_url, :init_embed_url, :init_redirect_url
+    attr_accessor :api_url, :init_embed_url, :init_redirect_url, :multi_document_url
     
     def initialize
       @api_url = conf.api_url
       @init_embed_url = conf.init_embed_url
       @init_redirect_url = conf.init_redirect_url
+      @multi_document_url = conf.multi_document_url
     end
 
     def call_api(body)
@@ -18,6 +19,10 @@ module JumioRock
 
     def init_redirect(body)
       post(init_redirect_url, body)
+    end
+
+    def init_multidocument(body)
+      post(multi_document_url, body)
     end
 
     def iframe(authorization_token)
