@@ -1,5 +1,6 @@
 module JumioRock
   class Client
+    attr_reader :authorization_token
     attr_accessor :api_url, :init_embed_url, :init_redirect_url, :multi_document_url
     
     def initialize
@@ -18,7 +19,9 @@ module JumioRock
     def init_embed(scan_reference, success_url, error_url, options = {})
       body = EmbedNetverifyParams.new(scan_reference, success_url, error_url)
       body = set_options body, options
-      post(init_embed_url, body.to_json)
+      response = post(init_embed_url, body.to_json)
+      @authorization_token = response.authorizationToken
+      response
     end
 
     def init_redirect(scan_reference, customer_id, options = {})
@@ -30,10 +33,12 @@ module JumioRock
     def init_multidocument(document_type, merchant_scan_reference, customer_id, success_url, error_url, options = {})
       body = MultiDocumentNetverifyParams.new(document_type, merchant_scan_reference, customer_id, success_url, error_url)
       body = set_options body, options
-      post(multi_document_url, body.to_json)
+      response = post(multi_document_url, body.to_json)
+      @authorization_token = response.authorizationToken
+      response
     end
 
-    def iframe(authorization_token, locale = "en")
+    def iframe(locale = "en")
       <<-TEXT
         <script type="text/javascript" src="https://netverify.com/widget/jumio-verify/2.0/iframe-script.js"> </script>
         <script type="text/javascript">
