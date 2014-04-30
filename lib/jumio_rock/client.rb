@@ -38,7 +38,15 @@ module JumioRock
       response
     end
 
-    def iframe(locale = "en")
+    def embed(locale = "en")
+      iframe(locale, "initVerify")
+    end
+
+    def embed_multi(locale = "en")
+      iframe(locale, "initMDM")
+    end
+
+    def iframe(locale = "en", type = "initVerify")
       <<-TEXT
         <script type="text/javascript" src="https://netverify.com/widget/jumio-verify/2.0/iframe-script.js"> </script>
         <script type="text/javascript">
@@ -46,7 +54,7 @@ module JumioRock
           JumioClient.setVars({
           authorizationToken: "#{authorization_token}",
           locale: "#{locale}"
-          }).initVerify("JUMIOIFRAME");
+          }).#{type}("JUMIOIFRAME");
           /*]]>*/
         </script>
       TEXT
