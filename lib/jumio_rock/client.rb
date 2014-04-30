@@ -55,8 +55,8 @@ module JumioRock
     private
 
     def set_options(body, options)
-      options.keys.each do |k|
-        body.send("#{k}=", options(k))
+      options.each do |k, v|
+        body.send("#{k}=", v)
       end
       body
     end
