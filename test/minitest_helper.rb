@@ -105,6 +105,23 @@ def fraud_api_response
   "idType=PASSPORT&idCheckSignature=N%2FA&rejectReason=%7B%20%22rejectReasonCode%22%3A%22100%22%2C%20%22rejectReasonDescription%22%3A%22MANIPULATED_DOCUMENT%22%2C%20%22rejectReasonDetails%22%3A%20%5B%7B%20%22detailsCode%22%3A%20%221001%22%2C%20%22detailsDescription%22%3A%20%22PHOTO%22%20%7D%2C%7B%20%22detailsCode%22%3A%20%221004%22%2C%20%22detailsDescription%22%3A%20%22DOB%22%20%7D%5D%7D&idCheckDataPositions=N%2FA&idCheckHologram=N%2FA&idCheckMicroprint=N%2FA&idCheckDocumentValidation=N%2FA&idCountry=USA&idScanSource=WEB_UPLOAD&verificationStatus=DENIED_FRAUD&jumioIdScanReference=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&merchantIdScanReference=YOURSCANREFERENCE&idCheckSecurityFeatures=N%2FA&idCheckMRZcode=N%2FA&idScanImage=https%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fidscan%2Fxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Ffront&callBackType=NETVERIFYID&clientIp=xxx.xxx.xxx.xxx&idScanStatus=ERROR"
 end
 
+def success_callback
+  <<-EOF
+  EOF
+end
+
+def callback_document_present
+  "jumioScanReference=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&documentType=CC&merchantScanReference=YOURSCANREFERENCE&documentPageImageUrls=%5Bhttps%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fdocuments%2Fxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Fimages%2F512ccacce4b08a828bd46ec8%2C+https%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fdocuments%xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Fimages%2F512ccacce4b08a828bd46ecd%5D&callBackType=DOCUMENT&customerID=CUSTOMERID&documentStatus=DOCUMENT_PRESENT"  
+end
+
+def callback_no_document_present
+  "jumioScanReference=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&documentType=CC&merchantScanReference=YOURSCANREFERENCE&callBackType=DOCUMENT&customerID=CUSTOMERID&documentStatus=NO_DOCUMENT_PRESENT"
+end
+
+def callback_unsupported_document_type
+  "jumioScanReference=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&documentType=CC&merchantScanReference=YOURSCANREFERENCE&callBackType=DOCUMENT&customerID=CUSTOMERID&documentStatus=DENIED_UNSUPPORTED_DOCUMENT_TYPE"
+end
+
 def parse_post(str)
   params = {}
   splitted_values = str.split('&')

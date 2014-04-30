@@ -12,8 +12,12 @@ module JumioRock
       end
     end
 
-    def success?
+    def verified?
       idScanStatus == "SUCCESS"
+    end
+
+    def status
+      (callBackType == "NETVERIFYID") ? verificationStatus : documentStatus
     end
 
   end

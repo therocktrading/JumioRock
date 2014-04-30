@@ -59,13 +59,13 @@ describe JumioRock::Client do
   it "success response" do 
     params = parse_post(success_api_response)
     pp = JumioRock::PostParser.new(params)
-    assert_equal(true, pp.success?)
+    assert_equal(true, pp.verified?)
   end
 
   it "fraud response" do
     params = parse_post(fraud_api_response)
     pp = JumioRock::PostParser.new(params)
-    assert_equal(false, pp.success?)
+    assert_equal(false, pp.verified?)
   end
 
 
