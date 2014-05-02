@@ -8,6 +8,7 @@ module JumioRock
       @init_embed_url = conf.init_embed_url
       @init_redirect_url = conf.init_redirect_url
       @multi_document_url = conf.multi_document_url
+      @initialization_type = nil
     end
 
     def call_api(scan_reference, front_side_image_path, options = {})
@@ -17,6 +18,7 @@ module JumioRock
     end
 
     def init_embed(scan_reference, success_url, error_url, options = {})
+      @initialization_type = :embed
       body = EmbedNetverifyParams.new(scan_reference, success_url, error_url)
       body = set_options body, options
       response = post(init_embed_url, body.to_json)
@@ -25,12 +27,14 @@ module JumioRock
     end
 
     def init_redirect(scan_reference, customer_id, options = {})
+      @initialization_type = :redirect
       body = RedirectNetverifyParams.new(scan_reference, customer_id)
       body = set_options body, options
       post(init_redirect_url, body.to_json)
     end
 
     def init_multidocument(document_type, merchant_scan_reference, customer_id, success_url, error_url, options = {})
+      @initialization_type = :multi
       body = MultiDocumentNetverifyParams.new(document_type, merchant_scan_reference, customer_id, success_url, error_url)
       body = set_options body, options
       response = post(multi_document_url, body.to_json)
@@ -38,15 +42,11 @@ module JumioRock
       response
     end
 
-    def embed(locale = "en")
-      iframe(locale, "initVerify")
+    def iframe(locale = "en")
+      iframe_html(locale, js_type)
     end
 
-    def embed_multi(locale = "en")
-      iframe(locale, "initMDM")
-    end
-
-    def iframe(locale = "en", type = "initVerify")
+    def iframe_html(locale = "en", type = "initVerify")
       <<-TEXT
         #{self.class.jumio_js}
         <script type="text/javascript">
@@ -55,6 +55,10 @@ module JumioRock
           /*]]>*/
         </script>
       TEXT
+    end
+
+    def js(locale = "en")
+      js_request(locale, js_type)
     end
 
     def js_request(locale, type)
@@ -71,6 +75,11 @@ module JumioRock
     end
 
     private
+
+    def js_type 
+      raise "Client not initialized (init_embed or init_multidocument)" unless @initialization_type
+      @initialization_type == :multi ? "initMDM" : "initVerify"
+    end
 
     def set_options(body, options)
       options.each do |k, v|
