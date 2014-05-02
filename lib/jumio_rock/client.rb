@@ -48,16 +48,26 @@ module JumioRock
 
     def iframe(locale = "en", type = "initVerify")
       <<-TEXT
-        <script type="text/javascript" src="https://netverify.com/widget/jumio-verify/2.0/iframe-script.js"> </script>
+        #{self.class.jumio_js}
         <script type="text/javascript">
           /*<![CDATA[*/
-          JumioClient.setVars({
-          authorizationToken: "#{authorization_token}",
-          locale: "#{locale}"
-          }).#{type}("JUMIOIFRAME");
+          #{js_request(locale, type)}
           /*]]>*/
         </script>
       TEXT
+    end
+
+    def js_request(locale, type)
+      <<-TEXT
+        "JumioClient.setVars({
+          authorizationToken: "#{authorization_token}",
+          locale: "#{locale}"
+        }).#{type}("JUMIOIFRAME");
+      TEXT
+    end
+
+    def self.jumio_js
+      '<script type="text/javascript" src="https://netverify.com/widget/jumio-verify/2.0/iframe-script.js"> </script>'
     end
 
     private
