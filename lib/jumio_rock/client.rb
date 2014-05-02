@@ -59,10 +59,10 @@ module JumioRock
 
     def js_request(locale, type)
       <<-TEXT
-        "JumioClient.setVars({
-          authorizationToken: "#{authorization_token}",
-          locale: "#{locale}"
-        }).#{type}("JUMIOIFRAME");
+        JumioClient.setVars({
+          authorizationToken: \"#{authorization_token}\",
+          locale: \"#{locale}\"
+        }).#{type}(\"JUMIOIFRAME\");
       TEXT
     end
 
