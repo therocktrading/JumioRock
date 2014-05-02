@@ -4,20 +4,16 @@ module JumioRock
 
     def initialize(params)
       @params = params
-      @params.keys.each do |method|
-        self.class.send(:define_method, method) do
-          return @params[method] if @params.has_key?(method)
-          nil
-        end
-      end
-    end
-
-    def verified?
-      idScanStatus == "SUCCESS"
+      # @params.keys.each do |method|
+      #   self.class.send(:define_method, method) do
+      #     return @params[method] if @params.has_key?(method)
+      #     nil
+      #   end
+      # end
     end
 
     def status
-      (callBackType == "NETVERIFYID") ? verificationStatus : documentStatus
+      (@params[:callBackType] == "NETVERIFYID") ? @params[:verificationStatus] : params[:documentStatus]
     end
 
   end
