@@ -35,21 +35,21 @@ def stub_init_embed_request
         'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 
         'Content-Type'=>'application/json', 
         'Host'=>'netverify.com:443', 
-        'User-Agent'=>'YOURCOMPANYNAME YOURAPPLICATIONNAME/0.0.1'}).
+        'User-Agent'=>"YOURCOMPANYNAME YOURAPPLICATIONNAME/#{JumioRock::VERSION}"}).
     to_return(:status => 200, :body => json_init_embed_response, :headers => {})
 end
 
 def stub_multi_document_request 
   stub_request(:post, "https://username:password@netverify.com/api/netverify/v2/createDocumentAcquisition").
     with(:body => "{\"documentType\":\"CC\",\"merchantScanReference\":\"YOURSCANREFERENCE\",\"customerID\":\"CUSTOMERID\",\"successUrl\":\"https://95.240.235.90/success\",\"errorUrl\":\"https://95.240.235.90/error\"}",
-       :headers => {'Accept'=>'application/json', 'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 'Content-Type'=>'application/json', 'Host'=>'netverify.com:443', 'User-Agent'=>'YOURCOMPANYNAME YOURAPPLICATIONNAME/0.0.1'}).
+       :headers => {'Accept'=>'application/json', 'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 'Content-Type'=>'application/json', 'Host'=>'netverify.com:443', 'User-Agent'=>"YOURCOMPANYNAME YOURAPPLICATIONNAME/#{JumioRock::VERSION}"}).
     to_return(:status => 200, :body => json_multi_document_response, :headers => {})
 end
 
 def stub_redirect_request
   stub_request(:post, "https://username:password@netverify.com/api/netverify/v2/initiateNetverifyRedirect").
     with(:body => "{\"merchantIdScanReference\":\"scan_id\",\"customerId\":\"customer_id\"}",
-       :headers => {'Accept'=>'application/json', 'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 'Content-Type'=>'application/json', 'Host'=>'netverify.com:443', 'User-Agent'=>'YOURCOMPANYNAME YOURAPPLICATIONNAME/0.0.1'}).
+       :headers => {'Accept'=>'application/json', 'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 'Content-Type'=>'application/json', 'Host'=>'netverify.com:443', 'User-Agent'=>"YOURCOMPANYNAME YOURAPPLICATIONNAME/#{JumioRock::VERSION}"}).
     to_return(:status => 200, :body => json_redirect_response, :headers => {})
 end
 
