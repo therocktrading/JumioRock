@@ -1,14 +1,14 @@
 require 'json'
 
 module JumioRock
-  
+
   class NetverifyParams
-    
+
     def to_json
       JSON.generate(params)
     end
 
-    private 
+    private
 
     def params
       data = {}
@@ -20,9 +20,10 @@ module JumioRock
       data
     end
 
-    # attr_reader instance variables must be set 
+    # attr_reader instance variables must be set
     def check_mandatory(data)
       required_params = self.instance_variables.select{|v| !respond_to?("#{v.to_s.gsub('@','')}=")}
+
       required_params.each do |r|
         name = r.to_s.sub('@', '')
         raise "#{name} is a required param" unless data[name]
