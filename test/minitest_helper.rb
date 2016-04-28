@@ -4,15 +4,8 @@ require 'webmock/minitest'
 
 require File.expand_path('../../lib/jumio_rock.rb', __FILE__)
 
-def create_test_image
-  path = File.expand_path(File.join(File.dirname(__FILE__), "../../../tmp/filename.png"))
-
-  png = ChunkyPNG::Image.new(16, 16, ChunkyPNG::Color::TRANSPARENT)
-  png[1,1] = ChunkyPNG::Color.rgba(10, 20, 30, 128)
-  png[2,1] = ChunkyPNG::Color('black @ 0.5')
-  png.save(path)
-
-  path
+def image_path
+  File.expand_path(File.join(File.dirname(__FILE__), "fixtures/filename.png"))
 end
 
 def stub_api_request
@@ -20,7 +13,7 @@ def stub_api_request
   url = jumio_conf.api_url.gsub(/http[s]:\/\//,'')
   stub_request(:post, "#{prefix}://#{jumio_conf.api_token}:#{jumio_conf.api_secret}@#{url}").
     with(:headers => {
-      'Host'=>'netverify.com:443', 
+      'Host'=>'netverify.com:443',
       'User-Agent'=>"#{jumio_conf.company_name} #{jumio_conf.app_name}/#{jumio_conf.version}"
     }).
     to_return(:status => 200, :body => json_api_response, :headers => {})
@@ -31,15 +24,15 @@ def stub_init_embed_request
     with(
       :body => "{\"merchantIdScanReference\":\"scanID\",\"successUrl\":\"http://success_url\",\"errorUrl\":\"http://error_url\"}",
       :headers => {
-        'Accept'=>'application/json', 
-        'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 
-        'Content-Type'=>'application/json', 
-        'Host'=>'netverify.com:443', 
+        'Accept'=>'application/json',
+        'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=',
+        'Content-Type'=>'application/json',
+        'Host'=>'netverify.com:443',
         'User-Agent'=>"YOURCOMPANYNAME YOURAPPLICATIONNAME/#{JumioRock::VERSION}"}).
     to_return(:status => 200, :body => json_init_embed_response, :headers => {})
 end
 
-def stub_multi_document_request 
+def stub_multi_document_request
   stub_request(:post, "https://username:password@netverify.com/api/netverify/v2/createDocumentAcquisition").
     with(:body => "{\"documentType\":\"CC\",\"merchantScanReference\":\"YOURSCANREFERENCE\",\"customerID\":\"CUSTOMERID\",\"successUrl\":\"https://95.240.235.90/success\",\"errorUrl\":\"https://95.240.235.90/error\"}",
        :headers => {'Accept'=>'application/json', 'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 'Content-Type'=>'application/json', 'Host'=>'netverify.com:443', 'User-Agent'=>"YOURCOMPANYNAME YOURAPPLICATIONNAME/#{JumioRock::VERSION}"}).
@@ -111,7 +104,7 @@ def success_callback
 end
 
 def callback_document_present
-  "jumioScanReference=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&documentType=CC&merchantScanReference=YOURSCANREFERENCE&documentPageImageUrls=%5Bhttps%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fdocuments%2Fxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Fimages%2F512ccacce4b08a828bd46ec8%2C+https%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fdocuments%xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Fimages%2F512ccacce4b08a828bd46ecd%5D&callBackType=DOCUMENT&customerID=CUSTOMERID&documentStatus=DOCUMENT_PRESENT"  
+  "jumioScanReference=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&documentType=CC&merchantScanReference=YOURSCANREFERENCE&documentPageImageUrls=%5Bhttps%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fdocuments%2Fxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Fimages%2F512ccacce4b08a828bd46ec8%2C+https%3A%2F%2Fnetverify.com%2Frecognition%2Fv1%2Fdocuments%xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx%2Fimages%2F512ccacce4b08a828bd46ecd%5D&callBackType=DOCUMENT&customerID=CUSTOMERID&documentStatus=DOCUMENT_PRESENT"
 end
 
 def callback_no_document_present
