@@ -1,15 +1,15 @@
 require_relative '../../minitest_helper'
 
 describe JumioRock::Client do
-  before :once do 
+  before :once do
     JumioRock::Configuration.configure do |config|
       config.api_token = "username"
       config.api_secret = "password"
     end
-    @path = create_test_image
+    @path = image_path
   end
-  
-  it "should post image using api" do 
+
+  it "should post image using api" do
     stub_api_request
 
     client = JumioRock::Client.new
@@ -18,21 +18,21 @@ describe JumioRock::Client do
 
   end
 
-  it 'initialize embed iframe' do 
+  it 'initialize embed iframe' do
     stub_init_embed_request
 
     auth_token = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
     client = JumioRock::Client.new
     response = client.init_embed("scanID", "http://success_url", "http://error_url")
-    
+
     assert_equal response.authorizationToken, auth_token
     iframe = client.iframe response.authorizationToken
     assert_match auth_token, iframe
 
   end
 
-  it 'initialize multi document' do 
+  it 'initialize multi document' do
     stub_multi_document_request
     auth_token = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
@@ -46,7 +46,7 @@ describe JumioRock::Client do
 
   end
 
-  it 'initialize redirect' do 
+  it 'initialize redirect' do
     stub_redirect_request
     auth_token = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
@@ -56,7 +56,7 @@ describe JumioRock::Client do
     assert_equal response.clientRedirectUrl, "https://[your-domain-prefix].netverify.com/v2?authorizationToken=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   end
 
-  it "success response" do 
+  it "success response" do
     params = parse_post(success_api_response)
     pp = JumioRock::PostParser.new(params)
     assert_equal("APPROVED_VERIFIED", pp.status)
