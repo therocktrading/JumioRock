@@ -1,13 +1,16 @@
 module JumioRock
   class Client
     attr_reader :authorization_token
-    attr_accessor :api_url, :init_embed_url, :init_redirect_url, :multi_document_url
-    
+    attr_accessor :api_url, :init_embed_url, :init_redirect_url,
+                  :multi_document_url, :acquisitions_url
+
     def initialize
-      @api_url = conf.api_url
-      @init_embed_url = conf.init_embed_url
-      @init_redirect_url = conf.init_redirect_url
-      @multi_document_url = conf.multi_document_url
+      @api_url             = conf.api_url
+      @init_embed_url      = conf.init_embed_url
+      @init_redirect_url   = conf.init_redirect_url
+      @multi_document_url  = conf.multi_document_url
+      @acquisitions_url    = conf.acquisitions_url
+
       @initialization_type = nil
     end
 
@@ -40,6 +43,23 @@ module JumioRock
       response = post(multi_document_url, body.to_json)
       @authorization_token = response.authorizationToken
       response
+    end
+
+    def init_acquisition(document_type, country, merchant_scan_reference, customer_id, options = {}) # , success_url, error_url)
+      @initialization_type = :acquisition
+      body = AcquisitionNetverifyParams.new(document_type, country, merchant_scan_reference,
+                                            customer_id) #, success_url, error_url)
+      body = set_options(body, options)
+
+      response = post(acquisitions_url, body.to_json)
+      @authorization_token = response.authorizationToken
+      @client_redirect_url = response.clientRedirectUrl
+
+      response
+    end
+
+    def acquisition_iframe
+      %(<iframe src="#{@client_redirect_url}" width="800px" height="600px"></iframe>)
     end
 
     def iframe(locale = "en")
@@ -76,7 +96,7 @@ module JumioRock
 
     private
 
-    def js_type 
+    def js_type
       raise "Client not initialized (init_embed or init_multidocument)" unless @initialization_type
       @initialization_type == :multi ? "initMDM" : "initVerify"
     end
@@ -103,7 +123,7 @@ module JumioRock
     end
 
     def headers
-      { 
+      {
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
         'User-Agent' => "#{conf.company_name} #{conf.app_name}/#{conf.version}"
