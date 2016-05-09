@@ -56,6 +56,16 @@ describe JumioRock::Client do
     assert_equal response.clientRedirectUrl, "https://[your-domain-prefix].netverify.com/v2?authorizationToken=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   end
 
+  it 'retrieve scan status' do
+    stub_retrieval_request
+
+    client = JumioRock::Client.new
+    response = client.retrieve("scan_id")
+
+    assert_equal response.scanReference, "scan_id"
+    assert_equal response.status, "DONE"
+  end
+
   it "success response" do
     params = parse_post(success_api_response)
     pp = JumioRock::PostParser.new(params)
