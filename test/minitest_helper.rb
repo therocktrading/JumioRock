@@ -52,6 +52,12 @@ def stub_retrieval_request
     to_return(:status => 200, :body => json_retrieval_response, :headers => {})
 end
 
+def stub_document_data_retrieval_request
+  stub_request(:get, "https://username:password@netverify.com/api/netverify/v2/scans/scan_id/data/document").
+    with(headers: {'Accept'=>'application/json', 'Authorization'=>'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 'Content-Type'=>'application/json', 'Host'=>'netverify.com:443', 'User-Agent'=>"YOURCOMPANYNAME YOURAPPLICATIONNAME/#{JumioRock::VERSION}"}).
+    to_return(:status => 200, :body => json_data_document_retrieval_response, :headers => {})
+end
+
 def jumio_conf
   JumioRock::Configuration.configuration
 end
@@ -102,6 +108,16 @@ def json_retrieval_response
       "timestamp": "2014-08-13T12:08:02.068Z",
       "scanReference": "scan_id",
       "status": "DONE"
+    }
+  EOF
+end
+
+def json_data_document_retrieval_response
+  <<-EOF
+    {
+      "status": "APPROVED_VERIFIED",
+      "scanReference": "scan_id",
+      "timestamp": "2014-08-14T09:05:47.394Z"
     }
   EOF
 end

@@ -66,6 +66,16 @@ describe JumioRock::Client do
     assert_equal response.status, "DONE"
   end
 
+  it 'retrieve document data' do
+    stub_document_data_retrieval_request
+
+    client = JumioRock::Client.new
+    response = client.retrieve_document_data("scan_id")
+
+    assert_equal response.scanReference, "scan_id"
+    assert_equal response.status, "APPROVED_VERIFIED"
+  end
+
   it "success response" do
     params = parse_post(success_api_response)
     pp = JumioRock::PostParser.new(params)

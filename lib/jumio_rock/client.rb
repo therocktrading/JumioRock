@@ -44,9 +44,19 @@ module JumioRock
     end
 
     def retrieve(scan_reference)
-      @initialization_type = :retrieveirb
-      url = File.join(retrieval_url, scan_reference.to_s).to_s
+      @initialization_type = :retrieve
+      url = retrieval_url_base(scan_reference)
       get(url)
+    end
+
+    def retrieve_document_data(scan_reference)
+      @initialization_type = :retrieve_document_data
+      url = File.join(retrieval_url_base(scan_reference), 'data/document')
+      get(url)
+    end
+
+    def retrieval_url_base(scan_reference)
+      File.join(retrieval_url, scan_reference.to_s)
     end
 
     def iframe(locale = "en")
